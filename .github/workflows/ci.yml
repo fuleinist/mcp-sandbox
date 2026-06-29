@@ -26,4 +26,4 @@ jobs:
         run: go test -v -race -count=1 ./...
 
       - name: Build
-        run: go build -v ./cmd/
+        run: go build -v -o mcp-sandbox ./cmd/
