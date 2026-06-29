@@ -50,6 +50,18 @@ func (c *Config) ApplyProfile(p *profile.Profile) {
 			}
 		}
 	}
+	// Merge deny-write paths
+	if len(p.DenyWrite) > 0 {
+		existing := make(map[string]bool)
+		for _, r := range c.DenyWrite {
+			existing[r] = true
+		}
+		for _, r := range p.DenyWrite {
+			if !existing[r] {
+				c.DenyWrite = append(c.DenyWrite, r)
+			}
+		}
+	}
 	// Merge env vars
 	if len(p.Env) > 0 {
 		existing := make(map[string]bool)

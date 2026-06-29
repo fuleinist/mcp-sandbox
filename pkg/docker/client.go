@@ -21,6 +21,7 @@ func BuildRunArgs(
 	image string,
 	cmd string,
 	allowRead []string,
+	denyWrite []string,
 	allowNet bool,
 	memory string,
 	cpu string,
@@ -57,6 +58,11 @@ func BuildRunArgs(
 	// Read-only mounts
 	for _, p := range allowRead {
 		args = append(args, "--mount", fmt.Sprintf("type=bind,source=%s,target=%s,readonly", p, p))
+	}
+
+	// Deny-write: mount tmpfs over paths to prevent writes
+	for _, p := range denyWrite {
+		args = append(args, "--tmpfs", fmt.Sprintf("%s:noexec,nosuid,size=1m", p))
 	}
 
 	// Environment variables

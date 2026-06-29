@@ -63,6 +63,20 @@ func TestApplyProfile_CLIPrecedence(t *testing.T) {
 	}
 }
 
+func TestApplyProfile_MergeDenyWrite(t *testing.T) {
+	cfg := Config{
+		DenyWrite: []string{"/etc"},
+	}
+	p := &profile.Profile{
+		DenyWrite: []string{"/root/.ssh", "/etc"},
+	}
+	cfg.ApplyProfile(p)
+
+	if len(cfg.DenyWrite) != 2 {
+		t.Errorf("expected 2 unique deny-write paths, got %d: %v", len(cfg.DenyWrite), cfg.DenyWrite)
+	}
+}
+
 func TestApplyProfile_MergeReadPaths(t *testing.T) {
 	cfg := Config{
 		AllowRead: []string{"/project"},

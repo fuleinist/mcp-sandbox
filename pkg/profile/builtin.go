@@ -11,6 +11,7 @@ var builtins = map[string]Profile{
 		AllowNetwork: false,
 		Transport:   "stdio",
 		AllowRead:   []string{"/project"},
+		DenyWrite:   []string{"/root/.ssh", "/root/.gitconfig"},
 		Env:         []string{"NODE_ENV=production"},
 	},
 	"python-default": {

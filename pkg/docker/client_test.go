@@ -10,6 +10,7 @@ func TestBuildRunArgs_Basic(t *testing.T) {
 		"node:22-alpine",
 		"npx @modelcontextprotocol/server-filesystem /project",
 		[]string{"/project"},
+		nil,
 		false,
 		"512m",
 		"1.0",
@@ -54,6 +55,7 @@ func TestBuildRunArgs_SSEWithPort(t *testing.T) {
 		"python:3.12",
 		"python -m mcp_server",
 		[]string{"/data"},
+		nil,
 		true,
 		"1g",
 		"2.0",
@@ -80,6 +82,7 @@ func TestBuildRunArgs_ReadOnlyMounts(t *testing.T) {
 		"node:22",
 		"node server.js",
 		[]string{"/project", "/data/config"},
+		nil,
 		false,
 		"",
 		"",
@@ -95,6 +98,30 @@ func TestBuildRunArgs_ReadOnlyMounts(t *testing.T) {
 	}
 	if !strings.Contains(joined, "source=/data/config,target=/data/config,readonly") {
 		t.Error("expected /data/config read-only mount")
+	}
+}
+
+func TestBuildRunArgs_DenyWrite(t *testing.T) {
+	args := BuildRunArgs(
+		"node:22",
+		"node server.js",
+		nil,
+		[]string{"/etc", "/root/.ssh"},
+		false,
+		"",
+		"",
+		"stdio",
+		0,
+		nil,
+		true,
+	)
+
+	joined := strings.Join(args, " ")
+	if !strings.Contains(joined, "--tmpfs /etc:noexec,nosuid,size=1m") {
+		t.Error("expected tmpfs mount for /etc deny-write")
+	}
+	if !strings.Contains(joined, "--tmpfs /root/.ssh:noexec,nosuid,size=1m") {
+		t.Error("expected tmpfs mount for /root/.ssh deny-write")
 	}
 }
 

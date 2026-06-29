@@ -37,6 +37,7 @@ func (r *Runner) Run(ctx context.Context) (int, error) {
 		r.cfg.Image,
 		r.cfg.Cmd,
 		r.cfg.AllowRead,
+		r.cfg.DenyWrite,
 		r.cfg.AllowNet,
 		r.cfg.Memory,
 		r.cfg.CPU,
