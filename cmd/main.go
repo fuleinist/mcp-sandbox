@@ -20,7 +20,7 @@ func main() {
 		},
 		Before: func(c *cli.Context) error {
 			if !docker.IsAvailable() {
-				return fmt.Errorf("Docker is not available. Make sure Docker is installed and the daemon is running.")
+				return fmt.Errorf("docker is not available — make sure Docker is installed and the daemon is running")
 			}
 			return nil
 		},
