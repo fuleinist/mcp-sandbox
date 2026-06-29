@@ -2,9 +2,11 @@ package sandbox
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/fuleinist/mcp-sandbox/pkg/docker"
 )
@@ -12,6 +14,14 @@ import (
 // Runner manages the lifecycle of a sandboxed MCP server.
 type Runner struct {
 	cfg Config
+}
+
+// RunResult represents the outcome of a sandbox run.
+type RunResult struct {
+	ExitCode    int    `json:"exit_code"`
+	ContainerID string `json:"container_id,omitempty"`
+	Transport   string `json:"transport"`
+	Port        int    `json:"port,omitempty"`
 }
 
 // NewRunner creates a new sandbox runner.
@@ -84,13 +94,13 @@ func (r *Runner) runSSE(ctx context.Context, args []string) (int, error) {
 	cmd := exec.CommandContext(ctx, "docker", detachArgs...)
 	cmd.Stderr = os.Stderr
 
-	containerID, err := cmd.Output()
+	out, err := cmd.Output()
 	if err != nil {
 		return 1, fmt.Errorf("failed to start container: %w", err)
 	}
 
-	id := string(containerID)
-	fmt.Printf("Container started: %s", id)
+	id := strings.TrimSpace(string(out))
+	fmt.Printf("Container started: %s\n", id)
 	fmt.Printf("MCP server listening on port %d (SSE)\n", r.cfg.Port)
 	fmt.Println("Press Ctrl+C to stop.")
 
@@ -105,6 +115,12 @@ func (r *Runner) runSSE(ctx context.Context, args []string) (int, error) {
 	_ = rmCmd.Run()
 
 	return 0, nil
+}
+
+// OutputJSON prints the run result as JSON.
+func OutputJSON(result RunResult) {
+	data, _ := json.Marshal(result)
+	fmt.Println(string(data))
 }
 
 

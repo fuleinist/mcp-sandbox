@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/fuleinist/mcp-sandbox/pkg/profile"
 	"github.com/fuleinist/mcp-sandbox/pkg/sandbox"
@@ -124,14 +122,23 @@ var runCmd = &cli.Command{
 			return fmt.Errorf("--port is required when using SSE transport")
 		}
 
-		// Handle signals for clean shutdown
-		sigCh := make(chan os.Signal, 1)
-		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+		jsonOutput := c.Bool("json")
 
 		runner := sandbox.NewRunner(cfg)
 		exitCode, err := runner.Run(c.Context)
 		if err != nil {
+			if jsonOutput {
+				sandbox.OutputJSON(sandbox.RunResult{ExitCode: 1})
+			}
 			return err
+		}
+
+		if jsonOutput {
+			sandbox.OutputJSON(sandbox.RunResult{
+				ExitCode:  exitCode,
+				Transport: cfg.Transport,
+				Port:      cfg.Port,
+			})
 		}
 
 		os.Exit(exitCode)
