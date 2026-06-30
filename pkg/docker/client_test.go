@@ -12,6 +12,7 @@ func TestBuildRunArgs_Basic(t *testing.T) {
 		[]string{"/project"},
 		nil,
 		false,
+		false,
 		"512m",
 		"1.0",
 		"stdio",
@@ -57,6 +58,7 @@ func TestBuildRunArgs_SSEWithPort(t *testing.T) {
 		[]string{"/data"},
 		nil,
 		true,
+		false,
 		"1g",
 		"2.0",
 		"sse",
@@ -84,6 +86,7 @@ func TestBuildRunArgs_ReadOnlyMounts(t *testing.T) {
 		[]string{"/project", "/data/config"},
 		nil,
 		false,
+		false,
 		"",
 		"",
 		"stdio",
@@ -108,6 +111,7 @@ func TestBuildRunArgs_DenyWrite(t *testing.T) {
 		nil,
 		[]string{"/etc", "/root/.ssh"},
 		false,
+		false,
 		"",
 		"",
 		"stdio",
@@ -128,4 +132,26 @@ func TestBuildRunArgs_DenyWrite(t *testing.T) {
 func TestPrintRunCommand(t *testing.T) {
 	// Just ensure it doesn't panic
 	PrintRunCommand([]string{"run", "--rm", "node:22", "node", "server.js"})
+}
+
+func TestBuildRunArgs_DenyNet(t *testing.T) {
+	args := BuildRunArgs(
+		"node:22",
+		"node server.js",
+		nil,
+		nil,
+		true,
+		true,
+		"",
+		"",
+		"stdio",
+		0,
+		nil,
+		true,
+	)
+
+	joined := strings.Join(args, " ")
+	if !strings.Contains(joined, "--network none") {
+		t.Error("expected --network none when denyNet is true even if allowNet is true")
+	}
 }

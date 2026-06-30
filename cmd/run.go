@@ -40,7 +40,7 @@ var runCmd = &cli.Command{
 		},
 		&cli.BoolFlag{
 			Name:  "deny-network",
-			Usage: "Explicitly deny network access",
+			Usage: "Explicitly deny network access (overrides --allow-network)",
 		},
 		&cli.StringFlag{
 			Name:  "memory",
@@ -83,6 +83,10 @@ var runCmd = &cli.Command{
 			Name:    "verbose",
 			Aliases: []string{"v"},
 			Usage:   "Show underlying docker commands",
+		},
+		&cli.BoolFlag{
+			Name:  "json",
+			Usage: "Output in JSON format",
 		},
 	},
 	Action: func(c *cli.Context) error {

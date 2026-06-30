@@ -39,6 +39,7 @@ func (r *Runner) Run(ctx context.Context) (int, error) {
 		r.cfg.AllowRead,
 		r.cfg.DenyWrite,
 		r.cfg.AllowNet,
+		r.cfg.DenyNet,
 		r.cfg.Memory,
 		r.cfg.CPU,
 		r.cfg.Transport,

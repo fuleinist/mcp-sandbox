@@ -23,6 +23,7 @@ func BuildRunArgs(
 	allowRead []string,
 	denyWrite []string,
 	allowNet bool,
+	denyNet bool,
 	memory string,
 	cpu string,
 	transport string,
@@ -48,7 +49,7 @@ func BuildRunArgs(
 	}
 
 	// Network
-	if !allowNet {
+	if denyNet || !allowNet {
 		args = append(args, "--network", "none")
 	}
 
