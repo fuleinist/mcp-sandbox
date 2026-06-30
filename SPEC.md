@@ -28,42 +28,50 @@ mcp-sandbox --image node:22 --cmd 'node server.mjs' --transport sse --port 3100
 
 ## Acceptance Criteria
 
-### CLI (MVP)
-- [ ] `mcp-sandbox` binary with subcommands: `run`, `profile`, `list`, `help`
-- [ ] `--image` flag: Docker image to use (required)
-- [ ] `--cmd` flag: command to run inside container (required)
-- [ ] `--allow-read` / `--deny-write`: filesystem mount rules (repeatable)
-- [ ] `--allow-network` / `--deny-network`: network access toggle (default: allow)
-- [ ] `--memory`: memory limit (e.g. `512m`, `2g`)
-- [ ] `--cpu`: CPU limit (e.g. `1.0`, `0.5`)
-- [ ] `--transport`: `stdio` (default) or `sse`
-- [ ] `--port`: host port mapping (for SSE transport)
-- [ ] `--profile`: load sandbox profile from YAML file
-- [ ] `--env`: pass environment variables into container (repeatable)
-- [ ] `--rm`: auto-remove container on exit (default: true)
-- [ ] Stdio mode: pipes stdin/stdout/stderr between host and container
-- [ ] SSE mode: exposes container port on host, forwards traffic
-- [ ] Exit code passthrough from container
+### CLI (MVP) ✅
+- [x] `mcp-sandbox` binary with subcommands: `run`, `profile`, `help`
+- [x] `--image` flag: Docker image to use (required)
+- [x] `--cmd` flag: command to run inside container (required)
+- [x] `--allow-read` / `--deny-write`: filesystem mount rules (repeatable)
+- [x] `--allow-network` / `--deny-network`: network access toggle (default: deny)
+- [x] `--memory`: memory limit (e.g. `512m`, `2g`)
+- [x] `--cpu`: CPU limit (e.g. `1.0`, `0.5`)
+- [x] `--transport`: `stdio` (default) or `sse`
+- [x] `--port`: host port mapping (for SSE transport)
+- [x] `--profile`: load sandbox profile from YAML file or built-in name
+- [x] `--env`: pass environment variables into container (repeatable)
+- [x] `--rm`: auto-remove container on exit (default: true)
+- [x] Stdio mode: pipes stdin/stdout/stderr between host and container
+- [x] SSE mode: exposes container port on host, forwards traffic
+- [x] Exit code passthrough from container
+- [x] `--dry-run`: print docker command without executing
+- [x] `--verbose` / `-v`: show underlying docker commands
+- [x] `--json`: JSON output mode for programmatic use
 
-### Profiles
-- [ ] YAML config file format (default: `~/.config/mcp-sandbox/profiles/`)
-- [ ] Built-in profiles: `node-fs`, `python-default`, `deno-basic`
-- [ ] `mcp-sandbox profile list` — list available profiles
-- [ ] `mcp-sandbox profile show <name>` — show profile details
+### Profiles ✅
+- [x] YAML config file format (default: `~/.config/mcp-sandbox/profiles/`)
+- [x] Built-in profiles: `node-fs`, `python-default`, `deno-basic`, `postgres-sse`
+- [x] `mcp-sandbox profile list` — list available profiles
+- [x] `mcp-sandbox profile show <name>` — show profile details
+- [x] `mcp-sandbox profile create` — create a new profile
 
-### Security
-- [ ] Default: no network, no write access, read-only root
-- [ ] Container runs as non-root user by default
-- [ ] Read mounts are read-only bind mounts
-- [ ] Write mounts are explicit opt-in
-- [ ] Network off by default, opt-in with `--allow-network`
-- [ ] Resource limits prevent fork bombs / memory DoS
+### Security ✅
+- [x] Default: no network, no write access, read-only root
+- [x] Container runs as non-root user by default (UID 1000)
+- [x] Read mounts are read-only bind mounts
+- [x] Write mounts are explicit opt-in
+- [x] Network off by default, opt-in with `--allow-network`
+- [x] Resource limits (`--memory`, `--cpus`)
+- [x] All Linux capabilities dropped (`--cap-drop ALL`)
+- [x] No new privileges (`--security-opt no-new-privileges:true`)
 
-### Developer Experience
-- [ ] Clear error messages (Docker not running, image not found, etc.)
-- [ ] JSON output mode (`--json`) for programmatic use
-- [ ] Dry-run mode (`--dry-run`) prints docker run command without executing
-- [ ] Verbose mode (`-v`) shows underlying docker commands
+### Developer Experience ✅
+- [x] Clear error messages (Docker not running, image not found, etc.)
+- [x] JSON output mode (`--json`) for programmatic use
+- [x] Dry-run mode (`--dry-run`) prints docker run command without executing
+- [x] Verbose mode (`-v`) shows underlying docker commands
+- [x] `--json` flag on `run` subcommand
+- [x] 11 unit tests covering all core functionality
 
 ## Tech Stack
 - **Language:** Go (single binary, good Docker SDK support)
